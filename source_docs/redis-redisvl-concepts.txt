@@ -1,0 +1,26 @@
+Source: https://redis.io/docs/latest/develop/ai/redisvl/concepts/
+
+Concepts
+Foundational knowledge for building AI applications with RedisVL. These concepts are language-agnostic and apply across all RedisVL implementations.
+🏗️ Architecture
+How RedisVL components connect: schemas, indexes, queries, and extensions.
+🔍 Search & Indexing
+Schemas, fields, documents, storage types, and query patterns.
+🏷️ Field Attributes
+Configure sortable, no_index, index_missing, and other field options.
+🔎 Query Types
+Vector, filter, text, hybrid, and multi-vector query options.
+🔧 Utilities
+Vectorizers for embeddings and rerankers for result optimization.
+🧠 MCP
+How RedisVL exposes an existing Redis index to MCP clients through a stable tool contract.
+🧩 Extensions
+Pre-built patterns: caching, message history, and semantic routing.
+RATE THIS PAGE
+★
+★
+★
+★
+★
+Back to top ↑
+Submit

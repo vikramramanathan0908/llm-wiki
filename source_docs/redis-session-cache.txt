@@ -1,0 +1,19 @@
+Redis Session Memory in Cognee
+
+Redis serves as the hot session scratchpad in the Cognee + Redis architecture.
+
+When you call cognee.remember(..., session_id="abc"), the data is written to Redis under that session key.
+When you call cognee.recall(..., session_id="abc"), Cognee searches Redis session memory first, then falls back to the permanent knowledge graph.
+
+This two-tier architecture means:
+- Recent conversation context is always fast to retrieve (Redis, sub-millisecond)
+- Permanent knowledge is durable and cross-session (Cognee graph)
+
+Redis also supports vector search via the Query Engine (redis/redis-stack image).
+redisvl provides Python bindings for Redis vector indexes, semantic caching, and session management.
+
+To use Redis as vector store in Cognee:
+    config.vector_db_provider = "redis"
+    config.vector_db_url = "redis://localhost:6379"
+
+Redis Insight GUI is available at http://localhost:8001 when using redis-stack.

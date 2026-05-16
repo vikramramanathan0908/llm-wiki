@@ -1,0 +1,19 @@
+Cognee remember() API
+
+cognee.remember(data, dataset_name=None, session_id=None)
+
+The remember() function ingests data into Cognee's memory system.
+
+- If session_id is provided, the data is written to the Redis-backed session cache (ephemeral, per-conversation).
+- If only dataset_name is provided, the data is written permanently into the Cognee knowledge graph (NetworkX + LanceDB).
+- Data can be text, a file path, a URL, or a SkillRunEntry.
+
+Example:
+    # Permanent wiki fact
+    await cognee.remember("Cognee uses LanceDB as its default vector store.", dataset_name="llm_wiki")
+
+    # Session memory (ephemeral, stored in Redis)
+    await cognee.remember("User is asking about session memory.", session_id="session_123")
+
+The permanent graph stores embeddings, entity relationships, and summaries that persist across sessions.
+Session memory is fast, ephemeral, and scoped to a session_id.

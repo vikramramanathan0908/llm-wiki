@@ -1,0 +1,717 @@
+Source: https://docs.cognee.ai/api-reference/introduction
+
+Cognee Documentation
+home page
+Search...
+⌘
+K
+Getting Started
+API Reference
+auth
+POST
+Login
+POST
+Logout
+GET
+Get Me
+POST
+Register:Register
+POST
+Reset:Forgot Password
+POST
+Reset:Reset Password
+POST
+Verify:Request-Token
+POST
+Verify:Verify
+GET
+Get Api Keys For User
+POST
+Create Api Key For User
+DEL
+Delete Api Key For User
+add
+POST
+Add
+cognify
+POST
+Cognify
+memify
+POST
+Memify
+search
+GET
+Get Search History
+POST
+Search
+permissions
+POST
+Give Datasets Permission To Principal
+POST
+Create Role
+POST
+Add User To Role
+POST
+Add User To Tenant
+DEL
+Remove User From Tenant Endpoint
+POST
+Create Tenant
+POST
+Select Tenant
+GET
+Get Tenant Roles
+GET
+Get Users In Role
+GET
+Get User Roles
+GET
+Get Users In Tenant
+GET
+Get My Tenants
+datasets
+GET
+Get Datasets
+POST
+Create New Dataset
+DEL
+Delete All
+DEL
+Delete Dataset
+DEL
+Delete Data
+GET
+Get Dataset Graph
+GET
+Get Dataset Data
+GET
+Get Dataset Status
+GET
+Get Raw Data
+GET
+Get Dataset Schema
+PUT
+Update Dataset Schema
+ontologies
+GET
+List Ontologies
+POST
+Upload Ontology
+DEL
+Delete Ontology
+settings
+GET
+Get Settings
+POST
+Save Settings
+visualize
+GET
+Visualize
+POST
+Visualize Multi
+configuration
+POST
+Store User Configuration
+GET
+Get User Configuration
+GET
+Get User All Configuration
+delete
+DEL
+Delete
+deprecated
+update
+PATCH
+Update
+responses
+POST
+Create Response
+llm
+POST
+Generate Custom Prompt
+POST
+Infer Schema
+sync
+POST
+Sync To Cloud
+GET
+Get Sync Status Overview
+users
+GET
+Users:Current User
+PATCH
+Users:Patch Current User
+GET
+Users:User
+DEL
+Users:Delete User
+PATCH
+Users:Patch User
+POST
+Get User Id
+notebooks
+GET
+Get Notebooks Endpoint
+POST
+Create Notebook Endpoint
+PUT
+Update Notebook Endpoint
+DEL
+Delete Notebook Endpoint
+POST
+Run Notebook Cell Endpoint
+checks
+POST
+Get Connection Check Endpoint
+health
+GET
+Health Check
+GET
+Detailed Health Check
+GET
+Root
+activity
+GET
+Get Pipeline Runs
+GET
+Get Spans
+GET
+Get Tenant Users
+GET
+Get Agents
+GET
+Export Dataset Markdown
+sessions
+GET
+List Sessions
+GET
+Get Stats
+GET
+Cost By Model
+GET
+Get Session Detail
+remember
+POST
+Remember
+POST
+Remember Entry
+recall
+GET
+Get Recall History
+POST
+Recall
+improve
+POST
+Improve
+forget
+POST
+Forget Endpoint
+GitHub
+Discord
+Cognee Documentation
+home page
+Search...
+⌘
+K
+Search...
+Navigation
+Getting Started
+API Reference
+Documentation
+Cognee Cloud
+Deploy
+Integrations
+MCP
+HTTP API
+Python API
+Documentation
+Cognee Cloud
+Deploy
+Integrations
+MCP
+HTTP API
+Python API
+Documentation Index
+Fetch the complete documentation index at:
+https://docs.cognee.ai/llms.txt
+Use this file to discover all available pages before exploring further.
+​
+Cognee API Reference
+Welcome to the Cognee API documentation. This comprehensive reference covers all endpoints for building, managing, and querying your memory using Cognee’s powerful platform.
+​
+Getting Started
+Before using the API, you need to choose how to run Cognee. You have two main options:
+Cognee Cloud
+Managed Cloud Platform
+Production-ready, fully managed service with automatic scaling and enterprise features.
+Local Docker Setup
+Self-Hosted Development
+Run Cognee locally using Docker for development, testing, and custom deployments.
+​
+Setup Options
+Cognee Cloud
+Local Docker
+Managed Service - Recommended for Production
+Sign up
+at
+platform.cognee.ai
+Create API Key
+in your dashboard
+Start using
+the API immediately
+# Base URL for Cognee Cloud
+BASE_URL
+=
+"https://api.cognee.ai"
+# Authentication
+curl
+-H
+"X-Api-Key: YOUR-API-KEY"
+\
+-H
+"Content-Type: application/json"
+\
+$BASE_URL
+/health
+Cognee Cloud provides enterprise-grade infrastructure with automatic scaling, managed databases, and 24/7 monitoring.
+Self-Hosted - Perfect for Development
+Quick start with Docker (single command):
+# Create environment file
+echo
+'LLM_API_KEY="your_openai_api_key"'
+>
+.env
+# Run Cognee container
+docker
+run
+--env-file
+./.env
+-p
+8000:8000
+--rm
+-it
+cognee/cognee:main
+Or use Docker Compose from the
+Cognee repository
+:
+# Clone repository
+git
+clone
+https://github.com/topoteretes/cognee.git
+cd
+cognee
+# Set up environment
+cp
+.env.template
+.env
+# Edit .env with your API keys
+# Start with Docker Compose
+docker-compose
+up
+-d
+Local setup uses embedded databases by default (SQLite, LanceDB, NetworkX) for easy development.
+​
+API Base URLs
+All Cognee API endpoints use the
+/api/v1
+prefix (e.g.,
+/api/v1/add
+,
+/api/v1/search
+,
+/api/v1/cognify
+). The path
+/api
+without
+the version suffix is not a valid route and will return a 404 error. Always include
+/api/v1
+in your requests.
+Production (Cognee Cloud)
+https://api.cognee.ai
+Authentication
+: X-Api-Key header
+Rate Limits
+: Based on your subscription plan
+Availability
+: 99.9% uptime SLA
+Local Development
+http://localhost:8000
+Authentication
+: Optional (can be disabled for local development)
+Rate Limits
+: None
+Availability
+: Depends on your local setup
+​
+Authentication
+Cognee Cloud
+Local Docker
+API Key Authentication
+All requests require an API key in the header:
+X-Api-Key
+:
+YOUR-API-KEY
+Content-Type
+:
+application/json
+Get your API key from the
+Cognee Cloud dashboard
+.
+Optional Authentication
+Local development typically runs without authentication:
+Content-Type
+:
+application/json
+To enable authentication locally, set
+REQUIRE_AUTHENTICATION=true
+in your
+.env
+file, then call
+POST /api/v1/auth/register
+to create a user and
+POST /api/v1/auth/login
+to obtain a Bearer token. See the
+Deploy REST API Server
+guide for full details.
+​
+Core API Endpoints
+The Cognee API provides endpoints for the complete knowledge graph lifecycle:
+Data Ingestion
+POST /api/v1/add
+Add text, documents, or structured data to your knowledge base.
+Knowledge Processing
+POST /api/v1/cognify
+Transform raw data into structured knowledge graphs with entities and relationships.
+Semantic Search
+POST /api/v1/search
+Query your knowledge graph using natural language or structured queries.
+Data Management
+DELETE /api/v1/datasets
+Remove specific data items or entire datasets from your knowledge base.
+​
+API Features
+Multiple Search Types
+Choose from different search modes based on your needs:
+GRAPH_COMPLETION
+(default): LLM-powered responses with graph context
+RAG_COMPLETION
+: LLM answer from retrieved chunks
+CHUNKS
+: Raw text segments matching your query
+SUMMARIES
+: Pre-generated hierarchical summaries
+TRIPLET_COMPLETION
+: Triple-based retrieval + LLM completion
+CHUNKS_LEXICAL
+: Lexical (e.g. Jaccard) chunk search
+CODING_RULES
+: Code-focused retrieval (coding rules / codebase)
+TEMPORAL
+: Time-aware retrieval
+GRAPH_COMPLETION_COT
+,
+GRAPH_COMPLETION_CONTEXT_EXTENSION
+,
+GRAPH_SUMMARY_COMPLETION
+: Advanced graph modes
+CYPHER
+,
+NATURAL_LANGUAGE
+: Direct or inferred Cypher (disabled when
+ALLOW_CYPHER_QUERY=false
+)
+FEELING_LUCKY
+: Auto-select search type
+Search also supports
+wide_search_top_k
+,
+triplet_distance_penalty
+,
+retriever_specific_config
+, and
+verbose
+for advanced control in the Python API. The HTTP
+POST /api/v1/search
+endpoint does not currently accept these advanced parameters. See
+Search Basics
+and
+Search
+.
+Flexible Data Formats
+Support for various input formats locally and strings on Cognee Cloud:
+Text
+: Raw text strings, documents, articles
+Structured
+: JSON, CSV, XML data
+Code
+: Source code files and repositories
+URLs
+: Web pages and online content
+​
+Data Deletion
+Cognee provides granular control over data deletion through the
+datasets
+endpoints.
+List Datasets
+List Dataset Data
+Delete Data Item
+Delete Dataset
+Delete All
+# List datasets you can access
+curl
+"http://localhost:8000/api/v1/datasets"
+\
+-H
+"Authorization: Bearer
+$TOKEN
+"
+Deletion requires the
+delete
+permission on the target dataset. See
+Permissions
+for details.
+DELETE /api/v1/delete
+is deprecated. Use the
+datasets
+endpoints above instead.
+​
+Quick Example
+Here’s a complete example using the API:
+Python
+cURL
+import
+requests
+# Configuration
+BASE_URL
+=
+"http://localhost:8000"
+# or https://api.cognee.ai for Cognee Cloud
+API_KEY
+=
+"your-api-key"
+# only for Cognee Cloud
+headers
+=
+{
+"Content-Type"
+:
+"application/json"
+,
+"X-Api-Key"
+:
+API_KEY
+# only for Cognee Cloud
+}
+# 1. Add data
+add_response
+=
+requests.post(
+f
+"
+{
+BASE_URL
+}
+/api/v1/add"
+,
+json
+=
+{
+"data"
+:
+"AI is transforming how we work and live."
+},
+headers
+=
+headers
+)
+# 2. Process into knowledge graph
+cognify_response
+=
+requests.post(
+f
+"
+{
+BASE_URL
+}
+/api/v1/cognify"
+,
+json
+=
+{
+"datasets"
+: [
+"main_dataset"
+]},
+headers
+=
+headers
+)
+# 3. Search the knowledge graph
+search_response
+=
+requests.post(
+f
+"
+{
+BASE_URL
+}
+/api/v1/search"
+,
+json
+=
+{
+"query"
+:
+"What is AI?"
+,
+"search_type"
+:
+"GRAPH_COMPLETION"
+},
+headers
+=
+headers
+)
+print
+(search_response.json())
+​
+Interactive API Explorer
+OpenAPI Specification
+Try the API interactively
+All endpoints on the left side of the page are automatically generated from our OpenAPI specification, providing interactive examples and real-time testing capabilities.
+Cognee Cloud
+Local Docker
+Interactive Swagger Endpoint Docs
+Our endpoints are also documented in Swagger with live testing capabilities. You can access the Swagger docs for Cognee Cloud at:
+https://api.cognee.ai/docs
+Interactive Swagger Endpoint Docs
+Our endpoints are also documented in Swagger with live testing capabilities. After you have started your local Cognee instance, you can access the Swagger docs at:
+http://localhost:8000/docs
+​
+Error Handling
+All API endpoints return standard HTTP status codes. Use the troubleshooting notes below when a request does not behave as expected.
+400 Bad Request
+A
+400 Bad Request
+usually means the request shape is invalid.
+Check the following:
+Malformed JSON
+: Make sure the request body is valid JSON and that quotes, commas, and braces are correct.
+Wrong content type
+: JSON requests should include
+Content-Type: application/json
+.
+Missing required fields
+: Compare your payload with the endpoint schema in the generated API reference below.
+Wrong parameter names
+: Confirm field names such as
+query
+,
+datasets
+, or
+search_type
+exactly match the documented request body.
+401 Unauthorized
+A
+401 Unauthorized
+error means the server did not accept your authentication credentials.
+Check the following:
+Wrong auth method
+: Cognee Cloud uses
+X-Api-Key: YOUR-API-KEY
+. Self-hosted instances use
+Authorization: Bearer <token>
+after
+POST /api/v1/auth/login
+when authentication is enabled.
+Missing or expired token
+: If you are running locally with authentication enabled, register a user, log in again, and retry with a fresh Bearer token.
+Testing
+GET /api/v1/users/me
+without auth
+: This endpoint is mainly useful when you are explicitly testing authentication. For unauthenticated local development, use other endpoints instead.
+Backend access control enabled
+: If
+ENABLE_BACKEND_ACCESS_CONTROL=true
+, authentication is still required even when
+REQUIRE_AUTHENTICATION=false
+.
+For local auth setup, see
+Deploy REST API Server
+.
+404 Not Found
+A
+404 Not Found
+usually means the route or resource does not exist.
+Check the following:
+Wrong path prefix
+: Use
+/api/v1/...
+, not
+/api/...
+. For example,
+/api/users/me
+returns a 404, while
+/api/v1/users/me
+is the correct path.
+Wrong HTTP method
+: Confirm you are using the method documented for the endpoint, such as
+POST
+for
+/api/v1/search
+.
+Missing resource
+: Dataset IDs, user IDs, or other resource identifiers may be validly formatted but not present in the current environment.
+429 Too Many Requests
+A
+429 Too Many Requests
+response means you have hit a rate limit.
+Try the following:
+Retry with backoff
+: Wait briefly before retrying, and increase the delay if the limit persists.
+Reduce burst traffic
+: Spread out large batches of requests instead of sending them all at once.
+Handle retries in code
+: Add retry logic so temporary throttling does not break your application flow.
+500 Internal Server Error
+A
+500 Internal Server Error
+usually indicates a server-side failure.
+Check the following:
+Server logs
+: Inspect the API server logs first to find the underlying exception.
+Provider configuration
+: Verify your LLM, graph database, and vector database settings are valid.
+Problem isolation
+: Retry with a smaller input or a simpler request to determine whether the issue is data-specific.
+Authentication and permissions side effects
+: If the error appears only in multi-user mode, verify your auth and permissions configuration.
+Always implement proper error handling in your applications to gracefully handle API failures and rate limits.
+​
+Next Steps
+Explore Endpoints
+API Documentation
+Browse all available endpoints with interactive examples below.
+Community Support
+Get Help
+Join our Discord community for support and discussions.
+Was this page helpful?
+Yes
+No
+Login
+Next
+⌘
+I
+On this page
+Cognee API Reference
+Getting Started
+Setup Options
+API Base URLs
+Authentication
+Core API Endpoints
+API Features
+Data Deletion
+Quick Example
+Interactive API Explorer
+Error Handling
+Next Steps

@@ -1,0 +1,124 @@
+Source: https://docs.cognee.ai/getting-started/introduction
+
+Cognee Documentation
+home page
+Search...
+⌘
+K
+Getting Started
+Introduction
+Installation
+Quickstart
+Core Concepts
+Overview
+Architecture
+Building Blocks
+Main Operations
+Further Concepts
+Multi-User Mode
+Setup Configuration
+Setup Configuration
+LLM Providers
+Structured Output Backends
+Embedding Providers
+Relational Databases
+Vector Stores
+Graph Stores
+Permissions Setup
+Security & Privacy
+Logging
+Cognee Community Adapters
+Guides
+Essentials
+Memify
+Customizing Cognee
+Examples
+Use Cases
+Tutorials
+Migrations
+CLI
+Cognee CLI Overview
+OSS
+Changelog
+Contributing
+GitHub
+Discord
+Cognee Documentation
+home page
+Search...
+⌘
+K
+Search...
+Navigation
+Getting Started
+Introduction
+Documentation
+Cognee Cloud
+Deploy
+Integrations
+MCP
+HTTP API
+Python API
+Documentation
+Cognee Cloud
+Deploy
+Integrations
+MCP
+HTTP API
+Python API
+Documentation Index
+Fetch the complete documentation index at:
+https://docs.cognee.ai/llms.txt
+Use this file to discover all available pages before exploring further.
+Give Cognee your documents, and it creates a graph of raw information, extracted concepts, and meaningful relationships you can query.
+​
+Why AI memory matters
+When you call an LLM, each request is stateless: it doesn’t remember what happened in the last call, and it doesn’t know about the rest of your documents.
+That makes it hard to build applications that actually use your documents and carry context forward. You need a memory layer that can link your documents together and create the right context for every LLM call.
+​
+How Cognee works
+Cognee v1.0 exposes four operations that cover the full memory lifecycle:
+.remember
+— Store data in memory:
+Give Cognee text, files, or URLs. It ingests, chunks, extracts entities, and builds the knowledge graph for you in one call. Supports permanent graph memory or fast session memory.
+.recall
+— Query memory:
+Ask a question in natural language. Cognee picks the best retrieval strategy automatically, or you can specify one. Works across the permanent graph and session cache.
+.improve
+— Enrich existing memory:
+Runs enrichment passes on an already-built graph. With session IDs, it bridges short-term session memory into the permanent graph and applies feedback-based weighting.
+.forget
+— Remove memory:
+Delete a specific data item, an entire dataset, or everything owned by the current user.
+If you want direct control over each pipeline step, the lower-level
+Add
+,
+Cognify
+,
+Search
+, and
+Memify
+operations are still available.
+​
+Ready to get started?
+Set up your environment
+Installation Guide
+Set up your environment and install Cognee to start building AI memory.
+Run your first example
+Quickstart Tutorial
+Get started with Cognee by running your first knowledge graph example.
+Keep exploring
+Core Concepts
+Dive deeper into Cognee’s powerful features and capabilities.
+Was this page helpful?
+Yes
+No
+Installation
+Set up your environment and install Cognee
+Next
+⌘
+I
+On this page
+Why AI memory matters
+How Cognee works
+Ready to get started?

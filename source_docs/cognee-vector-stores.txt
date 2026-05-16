@@ -1,0 +1,427 @@
+Source: https://docs.cognee.ai/setup-configuration/vector-stores
+
+Cognee Documentation
+home page
+Search...
+⌘
+K
+Getting Started
+Introduction
+Installation
+Quickstart
+Core Concepts
+Overview
+Architecture
+Building Blocks
+Main Operations
+Further Concepts
+Multi-User Mode
+Setup Configuration
+Setup Configuration
+LLM Providers
+Structured Output Backends
+Embedding Providers
+Relational Databases
+Vector Stores
+Graph Stores
+Permissions Setup
+Security & Privacy
+Logging
+Cognee Community Adapters
+Guides
+Essentials
+Memify
+Customizing Cognee
+Examples
+Use Cases
+Tutorials
+Migrations
+CLI
+Cognee CLI Overview
+OSS
+Changelog
+Contributing
+GitHub
+Discord
+Cognee Documentation
+home page
+Search...
+⌘
+K
+Search...
+Navigation
+Setup Configuration
+Vector Stores
+Documentation
+Cognee Cloud
+Deploy
+Integrations
+MCP
+HTTP API
+Python API
+Documentation
+Cognee Cloud
+Deploy
+Integrations
+MCP
+HTTP API
+Python API
+Documentation Index
+Fetch the complete documentation index at:
+https://docs.cognee.ai/llms.txt
+Use this file to discover all available pages before exploring further.
+Vector stores hold embeddings for semantic similarity search. They enable Cognee to find conceptually related content based on meaning rather than exact text matches.
+New to configuration?
+See the
+Setup Configuration Overview
+for the complete workflow:
+install extras → create
+.env
+→ choose providers → handle pruning.
+​
+Supported Providers
+Cognee supports multiple vector store options:
+LanceDB
+— File-based vector store, works out of the box (default)
+PGVector
+— Postgres-backed vector storage with pgvector extension
+Qdrant
+— High-performance vector database and similarity search engine
+Redis
+— Fast vector similarity search via Redis Search module
+ChromaDB
+— HTTP server-based vector database
+FalkorDB
+— Hybrid graph + vector database
+Neptune Analytics
+— Amazon Neptune Analytics hybrid solution
+​
+Configuration
+Environment Variables
+Set these environment variables in your
+.env
+file:
+VECTOR_DB_PROVIDER
+— The vector store provider (lancedb, pgvector, qdrant, redis, chromadb, falkordb, neptune_analytics)
+VECTOR_DB_URL
+— Database URL or connection string
+VECTOR_DB_KEY
+— Authentication key (provider-specific)
+VECTOR_DB_PORT
+— Database port (for some providers)
+​
+Setup Guides
+LanceDB (Default)
+LanceDB is file-based and requires no additional setup. It’s perfect for local development and single-user scenarios.
+VECTOR_DB_PROVIDER
+=
+"lancedb"
+# Optional, can be a path or URL. Defaults to <SYSTEM_ROOT_DIRECTORY>/databases/cognee.lancedb
+# VECTOR_DB_URL=/absolute/or/relative/path/to/cognee.lancedb
+Installation
+: LanceDB is included by default with Cognee. No additional installation required.
+Data Location
+: Vectors are stored in a local directory. Defaults under the Cognee system path if
+VECTOR_DB_URL
+is empty.
+PGVector
+PGVector stores vectors inside your Postgres database using the pgvector extension.
+VECTOR_DB_PROVIDER
+=
+"pgvector"
+# Uses the same Postgres connection as your relational DB (DB_HOST, DB_PORT, DB_NAME, DB_USERNAME, DB_PASSWORD)
+Installation
+: Install the Postgres extras:
+pip
+install
+"cognee[postgres]"
+# or for binary version
+pip
+install
+"cognee[postgres-binary]"
+Docker Setup
+: Use the built-in Postgres with pgvector:
+docker
+compose
+--profile
+postgres
+up
+-d
+Note
+: If using your own Postgres, ensure
+CREATE EXTENSION IF NOT EXISTS vector;
+is available in the target database.
+Qdrant
+Qdrant requires a running instance of the Qdrant server.
+VECTOR_DB_PROVIDER
+=
+"qdrant"
+VECTOR_DB_URL
+=
+"http://localhost:6333"
+Installation
+: Since Qdrant is a community adapter, you have to install the community package:
+pip
+install
+cognee-community-vector-adapter-qdrant
+Configuration
+: To make sure Cognee uses Qdrant, you have to register it beforehand with the following line:
+from
+cognee_community_vector_adapter_qdrant
+import
+register
+For more details on setting up Qdrant, visit the
+more detailed description
+of this adapter.
+Docker Setup
+: Start the Qdrant service:
+docker
+run
+-p
+6333:6333
+-p
+6334:6334
+\
+-v
+"$(
+pwd
+)/qdrant_storage:/qdrant/storage:z"
+\
+qdrant/qdrant
+Access
+: Default port is 6333 for the database, and you can access the Qdrant dashboard at “localhost:6333/dashboard”.
+Redis
+Redis can be used as a vector store through the Redis Search module, providing fast vector similarity search capabilities.
+VECTOR_DB_PROVIDER
+=
+"redis"
+VECTOR_DB_URL
+=
+"redis://localhost:6379"
+# VECTOR_DB_KEY is optional and not used by Redis
+Installation
+: Since Redis is a community adapter, you have to install the community package:
+pip
+install
+cognee-community-vector-adapter-redis
+Configuration
+: To make sure Cognee uses Redis, you have to register it beforehand with the following line:
+from
+cognee_community_vector_adapter_redis
+import
+register
+You can also configure Redis programmatically:
+from
+cognee
+import
+config
+config.set_vector_db_config({
+"vector_db_provider"
+:
+"redis"
+,
+"vector_db_url"
+:
+"redis://localhost:6379"
+,
+})
+For more details on setting up Redis, visit the
+more detailed description
+of this adapter.
+Docker Setup
+: Start a Redis instance with Search module enabled:
+docker
+run
+-d
+--name
+redis
+-p
+6379:6379
+redis:8.0.2
+Or use
+Redis Cloud
+with the Search module enabled:
+Redis Cloud
+Connection URL Examples
+:
+Local:
+redis://localhost:6379
+With authentication:
+redis://user:password@localhost:6379
+With SSL:
+rediss://localhost:6380
+ChromaDB
+ChromaDB requires a running Chroma server and authentication token.
+VECTOR_DB_PROVIDER
+=
+"chromadb"
+VECTOR_DB_URL
+=
+"http://localhost:3002"
+VECTOR_DB_KEY
+=
+"<your_token>"
+Installation
+: Install ChromaDB extras:
+pip
+install
+"cognee[chromadb]"
+# or directly
+pip
+install
+chromadb
+Docker Setup
+: Start the bundled ChromaDB server:
+docker
+compose
+--profile
+chromadb
+up
+-d
+FalkorDB
+FalkorDB can serve as both graph and vector store, providing a hybrid solution.
+VECTOR_DB_PROVIDER
+=
+"falkordb"
+VECTOR_DB_URL
+=
+"localhost"
+VECTOR_DB_PORT
+=
+"6379"
+Installation
+: Since FalkorDB is a community adapter, you have to install the community package:
+pip
+install
+cognee-community-hybrid-adapter-falkor
+Configuration
+: To make sure Cognee uses FalkorDB, you have to register it beforehand with the following line:
+from
+cognee_community_hybrid_adapter_falkor
+import
+register
+For more details on setting up FalkorDB, visit the
+more detailed description
+of this adapter.
+Docker Setup
+: Start the FalkorDB service:
+docker
+run
+-p
+6379:6379
+-p
+3000:3000
+-it
+--rm
+falkordb/falkordb:edge
+Access
+: Default ports are 6379 (DB) and 3000 (UI).
+Neptune Analytics
+Use Amazon Neptune Analytics as a hybrid vector + graph backend.
+VECTOR_DB_PROVIDER
+=
+"neptune_analytics"
+VECTOR_DB_URL
+=
+"neptune-graph://<GRAPH_ID>"
+# AWS credentials via environment or default SDK chain
+Installation
+: Install Neptune extras:
+pip
+install
+"cognee[neptune]"
+Note
+: URL must start with
+neptune-graph://
+and AWS credentials should be configured via environment variables or AWS SDK.
+​
+Important Considerations
+Dimension Consistency
+Ensure
+EMBEDDING_DIMENSIONS
+matches your vector store collection/table schemas:
+PGVector column size
+LanceDB Vector size
+ChromaDB collection schema
+Changing dimensions requires recreating collections.
+Provider Comparison
+Provider
+Setup
+Performance
+Use Case
+LanceDB
+Zero setup
+Good
+Local development
+PGVector
+Postgres required
+Excellent
+Production with Postgres
+Qdrant
+Server required
+Excellent
+High-performance vector search
+Redis
+Server required
+Excellent
+Low-latency in-memory search
+ChromaDB
+Server required
+Good
+Dedicated vector store
+FalkorDB
+Server required
+Good
+Hybrid graph + vector
+Neptune Analytics
+AWS required
+Excellent
+Cloud hybrid solution
+​
+Community-Maintained Providers
+Additional vector stores are available through community-maintained adapters:
+Qdrant
+— Vector search engine with cloud and self-hosted options
+Redis
+— Fast vector similarity search
+FalkorDB
+— Hybrid vector and graph store
+Pinecone
+— Managed vector database (requires separate install + registration)
+Turbopuffer
+— High-performance vector database
+Milvus, Weaviate, and more
+— See
+all community adapters
+​
+Notes
+Embedding Integration
+: Vector stores use your embedding engine from the Embeddings section
+Dimension Matching
+: Keep
+EMBEDDING_DIMENSIONS
+consistent between embedding provider and vector store
+Performance
+: Local providers (LanceDB) are simpler but cloud providers offer better scalability
+Embedding Providers
+Configure embedding providers for vector generation
+Graph Stores
+Set up graph databases for knowledge graphs
+Overview
+Return to setup configuration overview
+Was this page helpful?
+Yes
+No
+Previous
+Graph Stores
+Configure graph databases for knowledge graph storage and relationship reasoning in Cognee
+Next
+⌘
+I
+On this page
+Supported Providers
+Configuration
+Setup Guides
+Important Considerations
+Community-Maintained Providers
+Notes

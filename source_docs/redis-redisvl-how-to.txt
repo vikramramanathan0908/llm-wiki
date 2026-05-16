@@ -1,0 +1,80 @@
+Source: https://redis.io/docs/latest/develop/ai/redisvl/user_guide/how_to_guides/
+
+How-To Guides
+How-to guides are
+task-oriented
+recipes that help you accomplish specific goals. Each guide focuses on solving a particular problem and can be completed independently.
+🤖 LLM Extensions
+Cache LLM Responses
+— semantic caching to reduce costs and latency
+Use LangCache as the LLM cache
+— managed cache service with LangCache
+Manage LLM Message History
+— persistent chat history with relevancy retrieval
+Route Queries with SemanticRouter
+— classify intents and route queries
+🔍 Querying
+Query and Filter Data
+— combine tag, numeric, geo, and text filters
+Use Advanced Query Types
+— hybrid, multi-vector, range, and text queries
+Write SQL Queries for Redis
+— translate SQL to Redis query syntax
+🧮 Embeddings
+Create Embeddings with Vectorizers
+— OpenAI, Cohere, HuggingFace, and more
+Cache Embeddings
+— reduce costs by caching embedding vectors
+⚡ Optimization
+Rerank Search Results
+— improve relevance with cross-encoders and rerankers
+Optimize Indexes with SVS-VAMANA
+— graph-based vector search with compression
+💾 Storage
+Choose a Storage Type
+— Hash vs JSON formats and nested data
+💻 CLI Operations
+Manage Indices with the CLI
+— create, inspect, and delete indices from your terminal
+Run RedisVL MCP
+— expose an existing Redis index to MCP clients
+Quick Reference
+I want to...
+Guide
+Cache LLM responses
+Cache LLM Responses
+Use LangCache (managed) for LLM caching
+Use LangCache as the LLM cache
+Store chat history
+Manage LLM Message History
+Route queries by intent
+Route Queries with SemanticRouter
+Filter results by multiple criteria
+Query and Filter Data
+Use hybrid or multi-vector queries
+Use Advanced Query Types
+Translate SQL to Redis
+Write SQL Queries for Redis
+Choose an embedding model
+Create Embeddings with Vectorizers
+Speed up embedding generation
+Cache Embeddings
+Improve search accuracy
+Rerank Search Results
+Optimize index performance
+Optimize Indexes with SVS-VAMANA
+Decide on storage format
+Choose a Storage Type
+Manage indices from terminal
+Manage Indices with the CLI
+Expose an index through MCP
+Run RedisVL MCP
+RATE THIS PAGE
+★
+★
+★
+★
+★
+Back to top ↑
+Submit
+On this page

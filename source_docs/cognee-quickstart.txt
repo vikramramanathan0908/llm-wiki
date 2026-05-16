@@ -1,0 +1,193 @@
+Source: https://docs.cognee.ai/getting-started/quickstart
+
+Cognee Documentation
+home page
+Search...
+⌘
+K
+Getting Started
+Introduction
+Installation
+Quickstart
+Core Concepts
+Overview
+Architecture
+Building Blocks
+Main Operations
+Further Concepts
+Multi-User Mode
+Setup Configuration
+Setup Configuration
+LLM Providers
+Structured Output Backends
+Embedding Providers
+Relational Databases
+Vector Stores
+Graph Stores
+Permissions Setup
+Security & Privacy
+Logging
+Cognee Community Adapters
+Guides
+Essentials
+Memify
+Customizing Cognee
+Examples
+Use Cases
+Tutorials
+Migrations
+CLI
+Cognee CLI Overview
+OSS
+Changelog
+Contributing
+GitHub
+Discord
+Cognee Documentation
+home page
+Search...
+⌘
+K
+Search...
+Navigation
+Getting Started
+Quickstart
+Documentation
+Cognee Cloud
+Deploy
+Integrations
+MCP
+HTTP API
+Python API
+Documentation
+Cognee Cloud
+Deploy
+Integrations
+MCP
+HTTP API
+Python API
+Documentation Index
+Fetch the complete documentation index at:
+https://docs.cognee.ai/llms.txt
+Use this file to discover all available pages before exploring further.
+After completing the
+installation steps
+successfully, run your first Cognee example to see AI memory in action.
+​
+Basic Usage
+This minimal example shows how to store content and retrieve it:
+import
+cognee
+import
+asyncio
+async
+def
+main
+():
+# Create a clean slate for cognee -- reset data and system state
+await
+cognee.forget(
+everything
+=
+True
+)
+# Store content in memory (ingests, builds knowledge graph, enriches)
+text
+=
+"Cognee turns documents into AI memory."
+await
+cognee.remember(text)
+# Retrieve from memory
+results
+=
+await
+cognee.recall(
+query_text
+=
+"What does Cognee do?"
+)
+# Print
+for
+result
+in
+results:
+print
+(result.text)
+if
+__name__
+==
+'__main__'
+:
+asyncio.run(main())
+Example output
+Cognee converts (transforms) documents into AI memory — a structured, queryable representation of document content for AI systems.
+Output wording may vary by provider and model, but it should answer the question using the text stored with
+remember
+.
+Visualisation
+Interactive knowledge graph visualization — drag nodes, zoom, and hover for details. Create your own visualization with 2 additional lines of code
+here
+.
+​
+What just happened
+The code demonstrates Cognee’s two primary v1.0 operations:
+.remember
+— Stores data in memory. Under the hood it runs ingestion, chunking, entity extraction, graph building, and a follow-up enrichment pass. The result is a fully queryable knowledge graph.
+.recall
+— Retrieves from memory. It auto-routes the query to the best retrieval strategy and returns contextual results from the knowledge graph.
+​
+About
+async
+/
+await
+in Cognee
+Cognee uses asynchronous code extensively.
+That means many of its functions are defined with
+async
+and must be called with
+await
+. This lets Python handle waiting (e.g. for I/O or network calls) without blocking the rest of your program.
+Async basics
+This example uses
+async
+/
+await
+, Python’s way of doing asynchronous programming.
+Asynchronous programming is used when functions may block because they are waiting for something (for example, a reply from an API call). By writing
+async def
+, you define a function that can pause at certain points.
+The
+await
+keyword marks those calls that may need to pause.
+To run such functions, Python provides the
+asyncio
+library. It uses a loop, called the event loop, which executes your code in order but, whenever a function is waiting, can temporarily run another one. From inside your function, though, everything still runs top-to-bottom: each line after an
+await
+only executes once the awaited call has finished.
+Async resources
+A good starting point is this
+guide
+.
+Official documentation is available
+here
+.
+​
+Next Steps
+Cognee core concepts
+Learn about Cognee’s core concepts, architecture, building blocks, and main operations.
+Improve and enrich memory
+Enrich an existing graph and bridge session memory into permanent memory.
+Was this page helpful?
+Yes
+No
+Previous
+Overview
+Learn about Cognee's core concepts, architecture, and how to get started
+Next
+⌘
+I
+On this page
+Basic Usage
+What just happened
+About async / await in Cognee
+Next Steps

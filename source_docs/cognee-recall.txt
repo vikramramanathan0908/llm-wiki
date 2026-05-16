@@ -1,0 +1,19 @@
+Cognee recall() API
+
+cognee.recall(query, session_id=None, datasets=None)
+
+The recall() function retrieves relevant information from Cognee's memory.
+
+- If session_id is provided, Cognee searches the Redis session cache first, then falls through to the permanent knowledge graph.
+- If no session_id, recall queries only the permanent knowledge graph.
+- Results are ranked by semantic similarity.
+
+Example:
+    # Query with session context
+    results = await cognee.recall("how does session memory work?", session_id="session_123")
+
+    # Query permanent graph only
+    results = await cognee.recall("what is cognee?")
+
+recall() returns a list of relevant memory chunks with their source metadata.
+Use these chunks as context for LLM generation to produce grounded, cited answers.

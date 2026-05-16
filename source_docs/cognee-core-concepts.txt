@@ -1,0 +1,193 @@
+Source: https://docs.cognee.ai/core-concepts/overview
+
+Cognee Documentation
+home page
+Search...
+⌘
+K
+Getting Started
+Introduction
+Installation
+Quickstart
+Core Concepts
+Overview
+Architecture
+Building Blocks
+Main Operations
+Further Concepts
+Multi-User Mode
+Setup Configuration
+Setup Configuration
+LLM Providers
+Structured Output Backends
+Embedding Providers
+Relational Databases
+Vector Stores
+Graph Stores
+Permissions Setup
+Security & Privacy
+Logging
+Cognee Community Adapters
+Guides
+Essentials
+Memify
+Customizing Cognee
+Examples
+Use Cases
+Tutorials
+Migrations
+CLI
+Cognee CLI Overview
+OSS
+Changelog
+Contributing
+GitHub
+Discord
+Cognee Documentation
+home page
+Search...
+⌘
+K
+Search...
+Navigation
+Core Concepts
+Overview
+Documentation
+Cognee Cloud
+Deploy
+Integrations
+MCP
+HTTP API
+Python API
+Documentation
+Cognee Cloud
+Deploy
+Integrations
+MCP
+HTTP API
+Python API
+Documentation Index
+Fetch the complete documentation index at:
+https://docs.cognee.ai/llms.txt
+Use this file to discover all available pages before exploring further.
+​
+Introduction
+Cognee is an open source tool and platform that transforms your raw data into intelligent, searchable memory. It combines vector search with graph databases to make your data both searchable by meaning and connected by relationships.
+Dual storage architecture
+gives you both semantic search and structural reasoning
+Modular design
+composes
+Tasks
+,
+Pipelines
+, and
+DataPoints
+Main operations
+in Cognee v1.0 are
+remember
+,
+recall
+,
+improve
+, and
+forget
+, with legacy
+add
+,
+cognify
+,
+memify
+, and
+search
+still available as lower-level building blocks.
+​
+Table of Contents
+Architecture
+Cognee uses three complementary storage systems, each playing a different role:
+Relational store
+— Tracks documents, chunks, and provenance (where data came from and how it’s linked)
+Vector store
+— Holds embeddings for semantic similarity (numerical representations that find conceptually related content)
+Graph store
+— Captures entities and relationships in a knowledge graph (nodes and edges that show connections between concepts)
+This architecture makes your data both
+searchable
+(via vectors) and
+connected
+(via graphs). Cognee ships with lightweight defaults that run locally, and you can swap in production-ready backends when needed.
+For detailed information about the storage architecture, see
+Architecture
+.
+Building Blocks
+Cognee’s processing system is built from three fundamental components:
+DataPoints
+— Structured data units that become graph nodes, carrying both content and metadata for indexing
+Tasks
+— Individual processing units that transform data, from text analysis to relationship extraction
+Pipelines
+— Orchestration of Tasks into coordinated workflows, like assembly lines for data transformation
+These building blocks work together to create a flexible system where you can:
+Use built-in Tasks for common operations
+Create custom Tasks for domain-specific logic by extending DataPoints
+Compose Tasks into Pipelines that match your workflow
+Main Operations
+Cognee provides four main operations that users interact with:
+Remember
+— Store new memory in one call, either as permanent graph-backed memory or as session memory
+Recall
+— Query stored memory with session-aware and graph-backed retrieval
+Improve
+— Enrich existing memory and optionally bridge session memory into the permanent graph
+Forget
+— Remove memory at the item, dataset, or user scope
+Note:
+These v1.0 operations are the primary user-facing workflow.
+Further Concepts
+Beyond the core workflow, Cognee offers advanced features for sophisticated knowledge management:
+Node Sets
+— Tagging and organization system that helps categorize and filter your knowledge base content
+Agent Memory Decorator
+— A clean way to attach Cognee memory retrieval to an async agent function
+Ontologies
+— External knowledge grounding through RDF/XML ontologies that connect your data to established knowledge structures
+Loaders
+— Components that handle reading and normalizing various file formats into text
+Chunkers
+— Tools for splitting documents into manageable pieces for processing and embedding
+These concepts extend Cognee’s capabilities for:
+Organization
+— Managing growing knowledge bases with systematic tagging
+Knowledge grounding
+— Connecting your data to external, validated knowledge sources
+Domain expertise
+— Leveraging existing ontologies for specialized fields like medicine, finance, or research
+​
+Next steps
+A good way to learn Cognee is to start with its
+architecture
+, move on to
+building blocks
+, practice the
+main operations
+, and finally explore
+advanced features
+.
+Architecture
+Understand Cognee’s three storage systems and how they work together
+Building Blocks
+Learn about DataPoints, Tasks, and Pipelines that power the system
+Main Operations
+Learn the v1.0 workflow with Remember, Recall, Improve, and Forget
+Was this page helpful?
+Yes
+No
+Previous
+Architecture
+Understanding Cognee's storage architecture and system components
+Next
+⌘
+I
+On this page
+Introduction
+Table of Contents
+Next steps

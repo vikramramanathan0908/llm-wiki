@@ -1,0 +1,5 @@
+cognee[redis]
+redisvl
+streamlit
+python-dotenv
+openai

@@ -1,0 +1,131 @@
+Source: https://docs.cognee.ai/python-api
+
+Cognee Documentation
+home page
+Search...
+⌘
+K
+Reference
+Python API Reference
+Core Operations
+Data Management
+Configuration
+GitHub
+Discord
+Cognee Documentation
+home page
+Search...
+⌘
+K
+Search...
+Navigation
+Reference
+Python API Reference
+Documentation
+Cognee Cloud
+Deploy
+Integrations
+MCP
+HTTP API
+Python API
+Documentation
+Cognee Cloud
+Deploy
+Integrations
+MCP
+HTTP API
+Python API
+Documentation Index
+Fetch the complete documentation index at:
+https://docs.cognee.ai/llms.txt
+Use this file to discover all available pages before exploring further.
+​
+Python API Reference
+Complete reference for the
+cognee
+Python package. All functions are accessible
+directly from the top-level
+cognee
+module.
+import
+cognee
+# v1.0 workflow
+await
+cognee.remember(
+"Your data here"
+)
+results
+=
+await
+cognee.recall(
+"Your query"
+)
+​
+Core Operations
+These are the default v1.0 entry points for storing, querying, enriching, and deleting memory.
+remember()
+Store data as permanent graph memory or fast session memory in one call.
+recall()
+Query memory with auto-routing and session-aware retrieval.
+improve()
+Enrich an existing graph and bridge session memory into permanent memory.
+forget()
+Remove a data item, an entire dataset, or all memory for the current user.
+​
+Legacy Operations
+The lower-level pipeline operations are still available when you need direct control over each step.
+add()
+Ingest text, files, or structured data into the knowledge base.
+cognify()
+Transform raw data into a structured knowledge graph.
+search()
+Query the knowledge graph with multiple search modes.
+memify()
+Enrich an existing knowledge graph with custom extraction and enrichment tasks.
+​
+Data Management
+datasets
+List, create, and delete datasets.
+update()
+Update existing data items.
+prune
+Clean up data and system resources.
+delete()
+Delete data items (deprecated — use datasets).
+run_startup_migrations()
+Apply pending relational and vector database schema migrations.
+​
+Session Management
+Sessions Guide
+Use
+session_id
+and inspect stored conversation history with
+get_session()
+.
+Feedback System
+Add and clear feedback on stored session Q&A entries.
+​
+Configuration & Utilities
+config
+Configure LLM providers, databases, chunking, and more.
+SearchType
+All available search modes and when to use them.
+run_custom_pipeline()
+Execute custom task pipelines.
+Data Models
+Key types: DataPoint, Task, PipelineRunInfo, SearchResult.
+Was this page helpful?
+Yes
+No
+remember()
+Store permanent or session memory with the v1.0 ingestion API
+Next
+⌘
+I
+On this page
+Python API Reference
+Core Operations
+Legacy Operations
+Data Management
+Session Management
+Configuration & Utilities

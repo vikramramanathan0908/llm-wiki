@@ -1,0 +1,68 @@
+Source: https://redis.io/docs/latest/develop/ai/redisvl/user_guide/use_cases/
+
+Use Cases
+RedisVL powers a wide range of AI applications. Here's how to apply its features to common use cases.
+🧠 Agent Context
+Provide agents with the right information at the right time.
+RAG
+— Retrieval-Augmented Generation with
+vector search
+and
+hybrid queries
+Memory
+— Persistent
+message history
+across sessions
+Context Engineering
+— Combine
+filtering
+,
+reranking
+, and
+embeddings
+to curate the optimal context window
+⚡ Agent Optimization
+Reduce latency and cost for AI workloads.
+Semantic Caching
+— Cache LLM responses by meaning with
+SemanticCache
+Embeddings Caching
+— Avoid redundant embedding calls with
+EmbeddingsCache
+Semantic Routing
+— Route queries to the right handler with
+SemanticRouter
+🔍 General Search
+Build search experiences that understand meaning, not just keywords.
+Semantic Search
+—
+Vector queries
+with
+complex filtering
+Hybrid Search
+— Combine keyword and vector search with
+advanced query types
+SQL Translation
+— Use familiar SQL syntax with
+SQLQuery
+🎯 Personalization & RecSys
+Drive engagement with personalized recommendations.
+User Similarity
+— Find similar users or items using
+vector search
+Real-Time Ranking
+— Combine vector similarity with
+metadata filtering
+and
+reranking
+Multi-Signal Matching
+— Search across multiple embedding fields with
+MultiVectorQuery
+RATE THIS PAGE
+★
+★
+★
+★
+★
+Back to top ↑
+Submit
