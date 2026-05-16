@@ -1,5 +1,7 @@
 import asyncio
 import uuid
+import os
+import subprocess
 import streamlit as st
 from core.memory import setup_cognee
 from core.query import answer_question, apply_feedback
@@ -247,7 +249,7 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 # ── Tabs ───────────────────────────────────────────────────────────────────────
-tab1, tab2, tab3 = st.tabs(["Ask + Improve", "Audit", "Wiki"])
+tab1, tab2, tab3, tab4 = st.tabs(["Ask + Improve", "Audit", "Wiki", "Knowledge Graph"])
 
 # ── TAB 1 ──────────────────────────────────────────────────────────────────────
 with tab1:
@@ -357,3 +359,25 @@ with tab3:
         selected = st.selectbox("Page", list(pages.keys()))
         if selected:
             st.markdown(f'<div class="wiki-card">{pages[selected]}</div>', unsafe_allow_html=True)
+
+# ── TAB 4: GRAPH ───────────────────────────────────────────────────────────────
+with tab4:
+    st.markdown("""
+    <div style="margin-bottom:28px">
+        <div style="font-size:1.3rem;font-weight:700;color:#111;letter-spacing:-0.4px;margin-bottom:6px">Knowledge Graph</div>
+        <div style="font-size:0.86rem;color:#999;line-height:1.65">Visual map of entities and relationships extracted from all ingested documents.</div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    c1, _ = st.columns([1, 3])
+    with c1:
+        if st.button("Refresh graph", type="secondary", use_container_width=True):
+            subprocess.run([".venv/bin/python", "generate_graph.py"])
+
+    graph_path = "graph.html"
+    if os.path.exists(graph_path):
+        with open(graph_path) as f:
+            graph_html = f.read()
+        st.components.v1.html(graph_html, height=580, scrolling=False)
+    else:
+        st.info("No graph yet. Click Refresh graph to generate.")
