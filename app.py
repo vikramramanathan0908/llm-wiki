@@ -207,6 +207,8 @@ if "last_question" not in st.session_state:
     st.session_state.last_question = ""
 if "last_answer" not in st.session_state:
     st.session_state.last_answer = ""
+if "thumb_up_shown" not in st.session_state:
+    st.session_state.thumb_up_shown = False
 if "cognee_ready" not in st.session_state:
     asyncio.run(setup_cognee())
     st.session_state.cognee_ready = True
@@ -263,6 +265,7 @@ with tab1:
                 answer = asyncio.run(answer_question(question, SESSION_ID))
             st.session_state.last_question = question
             st.session_state.last_answer = answer
+            st.session_state.thumb_up_shown = False
 
     if st.session_state.last_answer:
         if "SemanticCache" in st.session_state.last_answer:
