@@ -24,6 +24,11 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
 .stApp { background: #f4f1ea; }
 .block-container { padding: 80px 0 120px !important; max-width: 680px !important; }
 
+/* Text selection */
+::selection { background: #111 !important; color: #f4f1ea !important; }
+::-moz-selection { background: #111 !important; color: #f4f1ea !important; }
+textarea::selection, input::selection { background: #111 !important; color: #f4f1ea !important; }
+
 /* ── Nav ── */
 .nav {
     position: fixed; top: 0; left: 0; right: 0; z-index: 100;
@@ -194,6 +199,19 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
     font-size: 0.68rem !important; font-weight: 600 !important;
     letter-spacing: 1px !important; text-transform: uppercase !important; color: #bbb !important;
 }
+/* Dropdown options */
+[data-baseweb="select"] * { color: #111 !important; }
+[data-baseweb="menu"] { background: #fff !important; border: 1px solid rgba(0,0,0,0.1) !important; }
+[data-baseweb="option"] { background: #fff !important; color: #111 !important; }
+[data-baseweb="option"]:hover { background: #f4f1ea !important; color: #111 !important; }
+[aria-selected="true"][data-baseweb="option"] { background: #111 !important; color: #f4f1ea !important; }
+/* Tab text */
+.stTabs [data-baseweb="tab"] { color: #999 !important; }
+.stTabs [aria-selected="true"] { color: #111 !important; }
+/* All text inputs visible */
+input, textarea, select { color: #111 !important; }
+/* Spinner */
+.stSpinner > div { border-top-color: #111 !important; }
 
 .stSuccess > div, .stWarning > div, .stInfo > div {
     border-radius: 10px !important; font-size: 0.86rem !important;
