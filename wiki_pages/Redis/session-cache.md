@@ -1,17 +1,16 @@
+```markdown
 # Redis/session-cache
-
-# Redis Session Memory in Cognee
 
 ## Summary
 Redis serves as the session memory for Cognee, providing a fast, temporary storage solution for recent conversation contexts while maintaining a durable knowledge graph for permanent data.
 
 ## Key Concepts
 - **Session Management**: 
-  - `cognee.remember(..., session_id="abc")`: Stores data in Redis under the specified session key.
-  - `cognee.recall(..., session_id="abc")`: Retrieves data from Redis first, falling back to the permanent knowledge graph if necessary.
-  
+  - `cognee.remember(..., session_id="abc")`: Stores data in Redis under the specified session key, acting as the hot scratchpad tier for quick access.
+  - `cognee.recall(..., session_id="abc")`: Retrieves data from Redis first, falling back to the permanent knowledge graph if necessary. For permanent storage, use `cognee.remember(..., dataset_name=...)` without a session_id.
+
 - **Two-Tier Architecture**:
-  - **Redis**: Offers sub-millisecond retrieval for recent conversation contexts.
+  - **Redis**: Offers sub-millisecond retrieval for recent conversation contexts, functioning as a hot scratchpad for session data.
   - **Cognee Graph**: Provides durable and cross-session permanent knowledge.
 
 - **Vector Search**: 
@@ -34,3 +33,4 @@ config.vector_db_url = "redis://localhost:6379"
 - What are the best practices for managing session data in Redis?
 - How does Redis handle data expiration for session keys?
 - What are the performance implications of using Redis for large-scale applications?
+```
