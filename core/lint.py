@@ -81,3 +81,74 @@ async def apply_lint_fix(issue: dict, fixed_content: str, page_name: str):
     with open(filepath, "w") as f:
         f.write(fixed_content)
     await remember_permanent(fixed_content, dataset=WIKI_DATASET)
+
+async def auto_fix_issue(issue: dict) -> tuple[str, str]:
+    """Option 1: GPT automatically resolves the issue, returns (page_name, fixed_content)."""
+    pages = load_all_wiki_pages()
+    page_a = issue.get("page_a", "")
+    page_b = issue.get("page_b", "")
+    content_a = pages.get(page_a, "")
+    content_b = pages.get(page_b, "")
+
+    prompt = f"""You are a wiki editor. Two wiki pages have a {issue['type']} issue.
+
+Page A: {page_a}
+{content_a}
+
+Page B: {page_b}
+{content_b}
+
+Issue:
+Claim A: {issue.get('claim_a', '')}
+Claim B: {issue.get('claim_b', '')}
+Recommendation: {issue.get('recommendation', '')}
+
+Automatically resolve this issue. Rewrite Page A to be correct and consistent with Page B (or vice versa — pick the more accurate version).
+Return ONLY the corrected markdown content for the page that should be rewritten, and on the very first line write:
+REWRITE_PAGE: <page_a or page_b>
+
+Then the full corrected markdown."""
+
+    response = await client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[{"role": "user", "content": prompt}],
+        temperature=0.2,
+    )
+    raw = response.choices[0].message.content.strip()
+    lines = raw.split("\n")
+    page_to_fix = page_a
+    if lines[0].startswith("REWRITE_PAGE:"):
+        which = lines[0].replace("REWRITE_PAGE:", "").strip()
+        page_to_fix = page_a if "page_a" in which or which == page_a else page_b
+        raw = "\n".join(lines[1:]).strip()
+
+    return page_to_fix, raw
+
+async def manual_fix_issue(issue: dict, chosen_page: str, user_instruction: str) -> tuple[str, str]:
+    """Option 2: User picks which page is correct + gives instruction, GPT rewrites the other."""
+    pages = load_all_wiki_pages()
+    page_a = issue.get("page_a", "")
+    page_b = issue.get("page_b", "")
+    correct_content = pages.get(chosen_page, "")
+    other_page = page_b if chosen_page == page_a else page_a
+    other_content = pages.get(other_page, "")
+
+    prompt = f"""You are a wiki editor. The user has decided that '{chosen_page}' is correct.
+Rewrite '{other_page}' to be consistent with the correct page.
+
+Correct page ({chosen_page}):
+{correct_content}
+
+Page to rewrite ({other_page}):
+{other_content}
+
+User instruction: {user_instruction}
+
+Return ONLY the corrected markdown for '{other_page}'."""
+
+    response = await client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[{"role": "user", "content": prompt}],
+        temperature=0.2,
+    )
+    return other_page, response.choices[0].message.content.strip()

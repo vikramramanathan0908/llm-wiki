@@ -3,9 +3,6 @@ import uuid
 import os
 import subprocess
 import streamlit as st
-from core.memory import setup_cognee
-from core.query import answer_question, apply_feedback
-from core.lint import run_lint, load_all_wiki_pages
 
 st.set_page_config(
     page_title="WikiMind",
@@ -13,6 +10,28 @@ st.set_page_config(
     layout="centered",
     initial_sidebar_state="collapsed",
 )
+
+
+def _secrets_to_environ() -> None:
+    """Streamlit Community Cloud injects TOML secrets; core/* reads os.environ."""
+    try:
+        sec = st.secrets
+        for key in sec:
+            val = sec[key]
+            if isinstance(val, dict):
+                for k2, v2 in val.items():
+                    os.environ[str(k2)] = str(v2)
+            else:
+                os.environ[str(key)] = str(val)
+    except Exception:
+        pass
+
+
+_secrets_to_environ()
+
+from core.memory import setup_cognee
+from core.query import answer_question, apply_feedback
+from core.lint import run_lint, load_all_wiki_pages, auto_fix_issue, manual_fix_issue, apply_lint_fix
 
 st.markdown("""
 <style>
@@ -28,6 +47,18 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
 ::selection { background: #111 !important; color: #f4f1ea !important; }
 ::-moz-selection { background: #111 !important; color: #f4f1ea !important; }
 textarea::selection, input::selection { background: #111 !important; color: #f4f1ea !important; }
+
+/* Radio buttons — force dark text */
+.stRadio label { color: #111 !important; font-size: 0.88rem !important; font-weight: 500 !important; }
+.stRadio > div { color: #111 !important; }
+.stRadio > div > div > label > div { color: #111 !important; }
+.stRadio p { color: #111 !important; }
+[data-testid="stRadio"] label { color: #111 !important; }
+[data-testid="stRadio"] p { color: #111 !important; }
+[data-testid="stWidgetLabel"] p { color: #111 !important; }
+[data-testid="stWidgetLabel"] { color: #111 !important; }
+/* All widget labels */
+label { color: #111 !important; }
 
 /* ── Nav ── */
 .nav {
@@ -118,7 +149,21 @@ textarea::selection, input::selection { background: #111 !important; color: #f4f
     transition: all 0.15s ease !important; border: none !important;
 }
 .stButton > button[kind="primary"] {
-    background: #111 !important; color: #f4f1ea !important;
+    background: #111 !important;
+    color: #f4f1ea !important;
+    -webkit-text-fill-color: #f4f1ea !important;
+}
+/* Inner nodes get their own color from Streamlit theme — force contrast on dark pill */
+.stButton > button[kind="primary"] *,
+.stButton > button[kind="primary"] p,
+.stButton > button[kind="primary"] span {
+    color: #f4f1ea !important;
+    -webkit-text-fill-color: #f4f1ea !important;
+}
+.stButton > button[kind="primary"]:hover,
+.stButton > button[kind="primary"]:hover * {
+    color: #f4f1ea !important;
+    -webkit-text-fill-color: #f4f1ea !important;
 }
 .stButton > button[kind="primary"]:hover {
     background: #2a2a2a !important;
@@ -189,6 +234,74 @@ textarea::selection, input::selection { background: #111 !important; color: #f4f
     font-size: 0.87rem; color: #333; line-height: 1.85; margin-top: 16px;
 }
 
+/* ── Markdown prose (Wiki tab, etc.) ──
+   Custom .stApp background is light; if Streamlit follows OS dark mode, body
+   text tokens stay light and disappear. Force dark prose on markdown blocks. */
+[data-testid="stMarkdownContainer"] {
+    color: #1a1a1a !important;
+}
+[data-testid="stMarkdownContainer"] p,
+[data-testid="stMarkdownContainer"] li,
+[data-testid="stMarkdownContainer"] td,
+[data-testid="stMarkdownContainer"] th,
+[data-testid="stMarkdownContainer"] h1,
+[data-testid="stMarkdownContainer"] h2,
+[data-testid="stMarkdownContainer"] h3,
+[data-testid="stMarkdownContainer"] h4,
+[data-testid="stMarkdownContainer"] h5,
+[data-testid="stMarkdownContainer"] h6,
+[data-testid="stMarkdownContainer"] span,
+[data-testid="stMarkdownContainer"] strong,
+[data-testid="stMarkdownContainer"] blockquote {
+    color: #1a1a1a !important;
+}
+[data-testid="stMarkdownContainer"] a {
+    color: #155dfc !important;
+}
+[data-testid="stMarkdownContainer"] code {
+    color: #1a1a1a !important;
+    background: rgba(0,0,0,0.07) !important;
+}
+[data-testid="stMarkdownContainer"] pre {
+    background: #f0eee8 !important;
+    color: #1a1a1a !important;
+    border: 1px solid rgba(0,0,0,0.08) !important;
+    border-radius: 8px !important;
+}
+[data-testid="stMarkdownContainer"] pre code {
+    background: transparent !important;
+    color: #1a1a1a !important;
+}
+
+/* ── Expander ── */
+[data-testid="stExpander"] {
+    border: none !important;
+    background: transparent !important;
+}
+[data-testid="stExpander"] summary,
+[data-testid="stExpander"] details summary,
+details summary {
+    background: #111 !important;
+    color: #f4f1ea !important;
+    border-radius: 100px !important;
+    padding: 11px 24px !important;
+    font-size: 0.8rem !important;
+    font-weight: 600 !important;
+    border: none !important;
+    list-style: none !important;
+}
+[data-testid="stExpander"] summary:hover { background: #2a2a2a !important; }
+[data-testid="stExpander"] summary p,
+[data-testid="stExpander"] summary span { color: #f4f1ea !important; }
+[data-testid="stExpander"] summary svg { stroke: #f4f1ea !important; }
+[data-testid="stExpanderDetails"] {
+    background: #fff !important;
+    border: 1px solid rgba(0,0,0,0.08) !important;
+    border-radius: 12px !important;
+    padding: 20px !important;
+    margin-top: 8px !important;
+}
+
 /* ── Selectbox ── */
 .stSelectbox > div > div {
     background: #fff !important; border: 1px solid rgba(0,0,0,0.11) !important;
@@ -211,7 +324,32 @@ textarea::selection, input::selection { background: #111 !important; color: #f4f
 /* All text inputs visible */
 input, textarea, select { color: #111 !important; }
 /* Spinner */
-.stSpinner > div { border-top-color: #111 !important; }
+/* Spinner — nuclear fix */
+div[data-testid="stSpinner"] * { color: #111 !important; stroke: #111 !important; border-color: #111 !important; }
+div[data-testid="stSpinner"] > div > div {
+    border-color: rgba(0,0,0,0.15) !important;
+    border-top-color: #111 !important;
+}
+svg[class*="spinner"] *, svg[class*="Spinner"] * { stroke: #111 !important; }
+.stSpinner * { color: #111 !important; }
+.stSpinner > div > div {
+    border-color: rgba(0,0,0,0.15) !important;
+    border-top-color: #111 !important;
+}
+/* Target the actual rotating circle SVG */
+[data-testid="stSpinner"] svg { display: none !important; }
+[data-testid="stSpinner"]::before {
+    content: '';
+    display: inline-block;
+    width: 18px; height: 18px;
+    border: 2px solid rgba(0,0,0,0.15);
+    border-top: 2px solid #111;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-right: 10px;
+    vertical-align: middle;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
 
 .stSuccess > div, .stWarning > div, .stInfo > div {
     border-radius: 10px !important; font-size: 0.86rem !important;
@@ -281,7 +419,7 @@ with tab1:
         if not question.strip():
             st.warning("Enter a question.")
         else:
-            with st.spinner(""):
+            with st.spinner("Searching knowledge graph..."):
                 answer = asyncio.run(answer_question(question, SESSION_ID))
             st.session_state.last_question = question
             st.session_state.last_answer = answer
@@ -302,26 +440,29 @@ with tab1:
 
         c1, _ = st.columns([1, 3])
         with c1:
-            if st.button("Mark correct", type="secondary", use_container_width=True):
-                st.success("Logged to session memory.")
+            mark_correct = st.button("Mark correct", type="secondary", use_container_width=True)
+        if mark_correct:
+            st.success("Logged to session memory.")
 
         feedback = st.text_area("Correction", placeholder="What was wrong? What is the correct answer?", height=96, key="fb")
         wiki_target = st.text_input("Wiki page", placeholder="e.g. Cognee/recall or Redis/session-cache", key="wt")
 
         c1, _ = st.columns([1, 3])
         with c1:
-            if st.button("Apply correction", type="primary", use_container_width=True):
-                if feedback and wiki_target:
-                    with st.spinner(""):
-                        corrected = asyncio.run(apply_feedback(
-                            st.session_state.last_question,
-                            st.session_state.last_answer,
-                            feedback, wiki_target, SESSION_ID,
-                        ))
-                    st.success("Wiki page updated and saved to Cognee graph.")
-                    st.markdown(f'<div class="wiki-card">{corrected}</div>', unsafe_allow_html=True)
-                else:
-                    st.warning("Provide both a correction and the wiki page name.")
+            apply_clicked = st.button("Apply correction", type="primary", use_container_width=True)
+
+        if apply_clicked:
+            if feedback and wiki_target:
+                with st.spinner("Rewriting wiki page..."):
+                    corrected = asyncio.run(apply_feedback(
+                        st.session_state.last_question,
+                        st.session_state.last_answer,
+                        feedback, wiki_target, SESSION_ID,
+                    ))
+                st.success("Wiki page updated and saved to Cognee graph.")
+                st.markdown(f'<div style="color:#111;background:#fff;border:1px solid rgba(0,0,0,0.08);border-radius:12px;padding:24px 28px;margin-top:16px;font-size:0.88rem;line-height:1.8">{corrected}</div>', unsafe_allow_html=True)
+            else:
+                st.warning("Provide both a correction and the wiki page name.")
 
 # ── TAB 2 ──────────────────────────────────────────────────────────────────────
 with tab2:
@@ -337,7 +478,7 @@ with tab2:
         run = st.button("Run audit", type="primary", use_container_width=True)
 
     if run:
-        with st.spinner(""):
+        with st.spinner("Auditing wiki pages..."):
             st.session_state.lint_issues = asyncio.run(run_lint())
 
     if st.session_state.lint_issues is not None:
@@ -346,7 +487,7 @@ with tab2:
             st.success("No issues found. Wiki is consistent.")
         else:
             st.markdown(f'<div style="font-size:0.68rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#bbb;margin:24px 0 14px">{len(issues)} issue(s) detected</div>', unsafe_allow_html=True)
-            for issue in issues:
+            for idx, issue in enumerate(issues):
                 t = issue.get("type", "unknown")
                 page_a = issue.get("page_a", "")
                 page_b = issue.get("page_b", "")
@@ -354,6 +495,7 @@ with tab2:
                 claim_a = f'<div class="lint-claim"><strong>A —</strong> {issue["claim_a"]}</div>' if issue.get("claim_a") else ""
                 claim_b = f'<div class="lint-claim"><strong>B —</strong> {issue["claim_b"]}</div>' if issue.get("claim_b") else ""
                 rec = f'<div class="lint-rec">{issue["recommendation"]}</div>' if issue.get("recommendation") else ""
+
                 st.markdown(f"""
                 <div class="lint-card">
                     <span class="lint-badge badge-{t}">{t.replace("_"," ")}</span>
@@ -361,6 +503,76 @@ with tab2:
                     {claim_a}{claim_b}{rec}
                 </div>
                 """, unsafe_allow_html=True)
+
+                if page_a and page_b:
+                    col1, col2 = st.columns(2)
+
+                    with col1:
+                        if st.button("Auto-fix (GPT decides)", key=f"auto_{idx}", type="primary", use_container_width=True):
+                            with st.spinner("GPT resolving issue..."):
+                                page_name, fixed = asyncio.run(auto_fix_issue(issue))
+                                asyncio.run(apply_lint_fix(issue, fixed, page_name))
+                            st.session_state[f"autofix_result_{idx}"] = (page_name, fixed)
+                            st.session_state.lint_issues = None
+
+                    with col2:
+                        if st.button("Manual fix — I'll decide", key=f"toggle_{idx}", type="primary", use_container_width=True):
+                            key = f"show_manual_{idx}"
+                            st.session_state[key] = not st.session_state.get(key, False)
+
+                    if st.session_state.get(f"show_manual_{idx}", False):
+                        pages_data = load_all_wiki_pages()
+                        content_a = pages_data.get(page_a, "")
+                        content_b = pages_data.get(page_b, "")
+                        preview_a = content_a[:200].replace("\n", " ").strip() + "..."
+                        preview_b = content_b[:200].replace("\n", " ").strip() + "..."
+
+                        st.markdown(f"""
+                        <div style="background:#fff;border:1px solid rgba(0,0,0,0.08);border-radius:12px;padding:20px 24px;margin-top:8px">
+                            <div style="font-size:0.72rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#aaa;margin-bottom:16px">Choose the correct page</div>
+                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+                                <div style="border:1px solid rgba(0,0,0,0.1);border-radius:8px;padding:14px">
+                                    <div style="font-size:0.72rem;font-weight:600;color:#888;font-family:monospace;margin-bottom:6px">{page_a}</div>
+                                    <div style="font-size:0.82rem;color:#333;line-height:1.5">{preview_a}</div>
+                                </div>
+                                <div style="border:1px solid rgba(0,0,0,0.1);border-radius:8px;padding:14px">
+                                    <div style="font-size:0.72rem;font-weight:600;color:#888;font-family:monospace;margin-bottom:6px">{page_b}</div>
+                                    <div style="font-size:0.82rem;color:#333;line-height:1.5">{preview_b}</div>
+                                </div>
+                            </div>
+                        </div>
+                        """, unsafe_allow_html=True)
+
+                        chosen = st.radio(
+                            "Which page is correct?",
+                            [page_a, page_b],
+                            key=f"radio_{idx}",
+                        )
+                        instruction = st.text_input(
+                            "Additional instruction (optional)",
+                            placeholder="e.g. keep the Redis-specific details, remove Elasticsearch references",
+                            key=f"instr_{idx}",
+                        )
+                        c1, _ = st.columns([1, 3])
+                        with c1:
+                            if st.button("Apply manual fix", key=f"manual_{idx}", type="primary", use_container_width=True):
+                                with st.spinner("Rewriting conflicting page..."):
+                                    page_name, fixed = asyncio.run(manual_fix_issue(issue, chosen, instruction))
+                                    asyncio.run(apply_lint_fix(issue, fixed, page_name))
+                                st.session_state[f"manualfix_result_{idx}"] = (page_name, fixed)
+                                st.session_state.lint_issues = None
+
+                if f"autofix_result_{idx}" in st.session_state:
+                    page_name, fixed = st.session_state[f"autofix_result_{idx}"]
+                    st.success(f"Fixed: `{page_name}` rewritten automatically. Re-run audit to verify.")
+                    st.markdown(fixed)
+
+                if f"manualfix_result_{idx}" in st.session_state:
+                    page_name, fixed = st.session_state[f"manualfix_result_{idx}"]
+                    st.success(f"Fixed: `{page_name}` rewritten. Re-run audit to verify.")
+                    st.markdown(fixed)
+
+                st.markdown("<hr style='border:none;border-top:1px solid rgba(0,0,0,0.06);margin:8px 0 20px'>", unsafe_allow_html=True)
 
 # ── TAB 3 ──────────────────────────────────────────────────────────────────────
 with tab3:
@@ -376,7 +588,7 @@ with tab3:
     else:
         selected = st.selectbox("Page", list(pages.keys()))
         if selected:
-            st.markdown(f'<div class="wiki-card">{pages[selected]}</div>', unsafe_allow_html=True)
+            st.markdown(pages[selected])
 
 # ── TAB 4: GRAPH ───────────────────────────────────────────────────────────────
 with tab4:

@@ -1,3 +1,4 @@
+```markdown
 # Redis/redisvl-use-cases
 
 # RedisVL Use Cases
@@ -40,3 +41,4 @@ RedisVL is a powerful tool that enhances a variety of AI applications by enablin
 - How can RedisVL be further optimized for specific AI workloads?
 - What are the best practices for implementing context engineering in real-world applications?
 - How does RedisVL compare to other AI data retrieval systems?
+```

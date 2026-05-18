@@ -7,7 +7,7 @@
 **Participants:**
 - Vikram Ramanathan
 - Sivasankaran Rajasekaran
-- Dinesh Raj Easwaran
+- Dinesh Raj Eswaran
 
 **Wiki / project name:** WikiMind — The LLM Knowledge Wiki That Learns
 

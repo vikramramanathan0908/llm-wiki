@@ -68,6 +68,17 @@ def store_cache(question: str, answer: str):
     except Exception as e:
         print(f"[redisvl] cache store failed (non-fatal): {e}")
 
+def clear_cache():
+    """Clear the entire semantic cache — called after a correction is applied."""
+    try:
+        cache = get_semantic_cache()
+        if cache is None:
+            return
+        cache.clear()
+        print(f"[redisvl] Cache cleared after correction ✅")
+    except Exception as e:
+        print(f"[redisvl] cache clear failed (non-fatal): {e}")
+
 def get_session_store(session_id: str):
     from redisvl.extensions.message_history import MessageHistory
     if session_id not in _session_stores:

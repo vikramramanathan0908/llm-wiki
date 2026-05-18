@@ -1,15 +1,14 @@
-# Cognee/architecture
-
 ```markdown
 # Cognee Architecture
 
 ## Summary
-Cognee's architecture is designed to handle various aspects of memory through the integration of three complementary storage systems: a relational store, a vector store, and a graph store. This multi-store approach ensures that data is both searchable and connected, facilitating efficient retrieval and management of information.
+Cognee is an open-source platform designed to transform raw data into intelligent, searchable memory by combining vector search with graph databases. Its architecture supports both semantic search and structural reasoning, allowing users to manage and retrieve data effectively through the integration of three complementary storage systems: a Relational Store, a Vector Store, and a Graph Store.
 
 ## Key Concepts
 
-### Why Multiple Stores
-- **Relational Store**: Tracks documents, their chunks, and provenance (source and linkage of data).
+### Architecture
+Cognee utilizes three complementary storage systems:
+- **Relational Store**: Tracks documents, chunks, and provenance (source and linkage of data).
 - **Vector Store**: Holds embeddings for semantic similarity, enabling the identification of conceptually related text.
 - **Graph Store**: Captures entities and relationships in a knowledge graph, allowing for structured navigation between concepts.
 

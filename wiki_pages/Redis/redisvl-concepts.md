@@ -1,3 +1,4 @@
+```markdown
 # Redis/redisvl-concepts
 
 # RedisVL Concepts
@@ -28,6 +29,9 @@ RedisVL provides a stable tool contract that exposes existing Redis indexes to M
 ### 🧩 Extensions
 Pre-built patterns available in RedisVL include caching, message history, and semantic routing, which can be leveraged to enhance application functionality.
 
+### 📦 SemanticCache
+The SemanticCache in RedisVL works by storing large language model (LLM) prompt-response pairs as vector embeddings in Redis Stack. When a new query arrives, it is embedded and compared against cached embeddings using cosine similarity. If a semantically similar query exists within the configured `distance_threshold` (e.g., 0.12), the cached response is returned instantly—no LLM call is made. This approach reduces latency from approximately 13 seconds to under 200 milliseconds and eliminates API costs for repeated or similar questions. The vectorizer (e.g., OpenAI text-embedding-3-small) converts prompts into vectors. The cache can be invalidated explicitly via `cache.clear()` when a wiki correction is applied, ensuring that stale answers do not persist after self-improvement.
+
 ## API Examples
 *Examples of API usage will be provided in the official RedisVL documentation.*
 
@@ -40,3 +44,4 @@ Pre-built patterns available in RedisVL include caching, message history, and se
 - What are the best practices for optimizing query performance in RedisVL?
 - How can RedisVL be integrated with other AI frameworks?
 - What are the limitations of current RedisVL implementations?
+```
