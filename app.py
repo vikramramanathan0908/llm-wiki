@@ -13,7 +13,20 @@ st.set_page_config(
 
 
 def _secrets_to_environ() -> None:
-    """Streamlit Community Cloud TOML secrets → os.environ (flat or one nested dict level)."""
+    """Copy Streamlit Cloud TOML secrets into os.environ.
+
+    Supports top-level keys and nested tables that contain OPENAI_API_KEY / REDIS_URL
+    (nested walks only allow-listed names so we do not set generic keys like ``host``).
+    """
+    _ALLOW = frozenset({"OPENAI_API_KEY", "REDIS_URL", "LLM_MODEL"})
+
+    def merge_nested(d: dict) -> None:
+        for k, v in d.items():
+            if isinstance(v, dict):
+                merge_nested(v)
+            elif v is not None and str(k) in _ALLOW:
+                os.environ[str(k)] = str(v).strip()
+
     try:
         sec = st.secrets
     except Exception:
@@ -21,19 +34,22 @@ def _secrets_to_environ() -> None:
     for key in sec:
         val = sec[key]
         if isinstance(val, dict):
-            for k2, v2 in val.items():
-                if v2 is not None and not isinstance(v2, dict):
-                    os.environ[str(k2)] = str(v2)
+            merge_nested(val)
         elif val is not None:
-            os.environ[str(key)] = str(val)
+            os.environ[str(key)] = str(val).strip()
 
 
 _secrets_to_environ()
 
 if not (os.environ.get("OPENAI_API_KEY") or "").strip():
     st.error(
-        "Missing **OPENAI_API_KEY**. In Streamlit Cloud: **Manage app** (⋮) → **Settings** → **Secrets** "
-        "and add a TOML line exactly: `OPENAI_API_KEY = \"sk-...\"` then **Save** and **Reboot** the app."
+        "Missing OPENAI_API_KEY.\n\n"
+        "1. On share.streamlit.io open this deployed app.\n"
+        "2. Manage app (bottom right) → Settings → Secrets (TOML editor).\n"
+        "3. Add one line with your real key (keep the quotes):\n\n"
+        "OPENAI_API_KEY = \"sk-...\"\n\n"
+        "4. Save, then Reboot the app from Manage app.\n\n"
+        "The variable name must be exactly OPENAI_API_KEY (not openai_key or OPENAI_KEY)."
     )
     st.stop()
 
