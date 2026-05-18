@@ -1,10 +1,20 @@
 import uuid
 import os
 from openai import AsyncOpenAI
-from core.config import OPENAI_API_KEY, WIKI_DATASET, SOURCE_DATASET
+from core.config import WIKI_DATASET, SOURCE_DATASET
 from core.memory import remember_permanent, remember_session
 
-client = AsyncOpenAI(api_key=OPENAI_API_KEY)
+_openai_client: AsyncOpenAI | None = None
+
+
+def _openai() -> AsyncOpenAI:
+    global _openai_client
+    if _openai_client is None:
+        key = (os.environ.get("OPENAI_API_KEY") or "").strip()
+        if not key:
+            raise RuntimeError("OPENAI_API_KEY is not set.")
+        _openai_client = AsyncOpenAI(api_key=key)
+    return _openai_client
 
 WIKI_PAGE_DIR = "wiki_pages"
 
@@ -25,7 +35,7 @@ Output a markdown wiki page with these sections:
 
 Be concise and factual."""
 
-    response = await client.chat.completions.create(
+    response = await _openai().chat.completions.create(
         model="gpt-4o-mini",
         messages=[{"role": "user", "content": prompt}],
         temperature=0.3,

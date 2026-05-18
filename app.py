@@ -1,5 +1,5 @@
 import asyncio
-import uuid
+import uuid 
 import os
 import subprocess
 import streamlit as st
@@ -13,21 +13,29 @@ st.set_page_config(
 
 
 def _secrets_to_environ() -> None:
-    """Streamlit Community Cloud injects TOML secrets; core/* reads os.environ."""
+    """Streamlit Community Cloud TOML secrets → os.environ (flat or one nested dict level)."""
     try:
         sec = st.secrets
-        for key in sec:
-            val = sec[key]
-            if isinstance(val, dict):
-                for k2, v2 in val.items():
-                    os.environ[str(k2)] = str(v2)
-            else:
-                os.environ[str(key)] = str(val)
     except Exception:
-        pass
+        return
+    for key in sec:
+        val = sec[key]
+        if isinstance(val, dict):
+            for k2, v2 in val.items():
+                if v2 is not None and not isinstance(v2, dict):
+                    os.environ[str(k2)] = str(v2)
+        elif val is not None:
+            os.environ[str(key)] = str(val)
 
 
 _secrets_to_environ()
+
+if not (os.environ.get("OPENAI_API_KEY") or "").strip():
+    st.error(
+        "Missing **OPENAI_API_KEY**. In Streamlit Cloud: **Manage app** (⋮) → **Settings** → **Secrets** "
+        "and add a TOML line exactly: `OPENAI_API_KEY = \"sk-...\"` then **Save** and **Reboot** the app."
+    )
+    st.stop()
 
 from core.memory import setup_cognee
 from core.query import answer_question, apply_feedback

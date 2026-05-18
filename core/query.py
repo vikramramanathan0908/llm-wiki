@@ -1,11 +1,23 @@
 import os
 import numpy as np  # noqa: F401 — used inside semantic_search_disk
 from openai import AsyncOpenAI
-from core.config import OPENAI_API_KEY, WIKI_DATASET
+from core.config import WIKI_DATASET
 from core.memory import remember_session, remember_permanent, recall as cognee_recall
 from core.redis_memory import add_to_session, get_session_history, check_cache, store_cache, clear_cache
 
-client = AsyncOpenAI(api_key=OPENAI_API_KEY)
+_openai_client: AsyncOpenAI | None = None
+
+
+def _openai() -> AsyncOpenAI:
+    global _openai_client
+    if _openai_client is None:
+        key = (os.environ.get("OPENAI_API_KEY") or "").strip()
+        if not key:
+            raise RuntimeError(
+                "OPENAI_API_KEY is not set (check Streamlit Secrets or a local .env file)."
+            )
+        _openai_client = AsyncOpenAI(api_key=key)
+    return _openai_client
 
 WIKI_PAGE_DIR = "wiki_pages"
 
@@ -21,7 +33,7 @@ def load_all_wiki_pages() -> dict:
     return pages
 
 async def embed(text: str) -> list:
-    resp = await client.embeddings.create(model="text-embedding-3-small", input=text[:8000])
+    resp = await _openai().embeddings.create(model="text-embedding-3-small", input=text[:8000])
     return resp.data[0].embedding
 
 async def semantic_search_disk(question: str, top_k: int = 3) -> list[tuple[str, str]]:
@@ -84,7 +96,7 @@ Question: {question}
 Answer concisely. Then end with a line:
 **Sources:** {sources}"""
 
-    response = await client.chat.completions.create(
+    response = await _openai().chat.completions.create(
         model="gpt-4o-mini",
         messages=[{"role": "user", "content": prompt}],
         temperature=0.2,
@@ -122,7 +134,7 @@ User feedback: {feedback}
 
 Output the full corrected wiki page in markdown."""
 
-    response = await client.chat.completions.create(
+    response = await _openai().chat.completions.create(
         model="gpt-4o-mini",
         messages=[{"role": "user", "content": prompt}],
         temperature=0.3,

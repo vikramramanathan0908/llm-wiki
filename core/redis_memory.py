@@ -7,7 +7,6 @@ from dotenv import load_dotenv
 load_dotenv()
 
 REDIS_URL = os.environ.get("REDIS_URL", "redis://localhost:6379")
-OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
 
 try:
     _client = redis.from_url(REDIS_URL, decode_responses=True)
@@ -30,7 +29,7 @@ def get_semantic_cache():
             from redisvl.utils.vectorize import OpenAITextVectorizer
             vectorizer = OpenAITextVectorizer(
                 model="text-embedding-3-small",
-                api_config={"api_key": OPENAI_API_KEY},
+                api_config={"api_key": os.environ.get("OPENAI_API_KEY", "")},
             )
             _semantic_cache = SemanticCache(
                 name="wiki-llm-cache",
