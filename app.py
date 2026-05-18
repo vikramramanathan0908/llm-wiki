@@ -15,8 +15,9 @@ st.set_page_config(
 def _secrets_to_environ() -> None:
     """Copy Streamlit Cloud TOML secrets into os.environ.
 
-    Supports top-level keys and nested tables that contain OPENAI_API_KEY / REDIS_URL
-    (nested walks only allow-listed names so we do not set generic keys like ``host``).
+    Streamlit's ``st.secrets`` is not always a plain ``dict``; we support ``.items()``,
+    key iteration, and direct ``sec["OPENAI_API_KEY"]`` so the key reliably reaches
+    ``os.environ`` before any ``core.*`` import.
     """
     _ALLOW = frozenset({"OPENAI_API_KEY", "REDIS_URL", "LLM_MODEL"})
 
@@ -31,12 +32,31 @@ def _secrets_to_environ() -> None:
         sec = st.secrets
     except Exception:
         return
-    for key in sec:
-        val = sec[key]
+
+    pairs: list[tuple[str, object]] = []
+    try:
+        pairs = [(str(k), v) for k, v in sec.items()]
+    except Exception:
+        try:
+            for k in sec:
+                pairs.append((str(k), sec[k]))
+        except Exception:
+            pass
+
+    for key, val in pairs:
         if isinstance(val, dict):
             merge_nested(val)
         elif val is not None:
-            os.environ[str(key)] = str(val).strip()
+            os.environ[key] = str(val).strip()
+
+    # Direct access (covers edge cases where iteration misses top-level keys)
+    for name in ("OPENAI_API_KEY", "REDIS_URL"):
+        try:
+            v = sec[name]
+            if v is not None and not isinstance(v, dict) and str(v).strip():
+                os.environ[name] = str(v).strip()
+        except Exception:
+            pass
 
 
 _secrets_to_environ()
